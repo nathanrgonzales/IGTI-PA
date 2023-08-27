@@ -5,6 +5,14 @@ using MyAppIGTI.DBRepo;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.ConfigureEndpointDefaults(listenOptions =>
+    {
+        // ...
+    });
+});
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddEntityFrameworkSqlServer().AddDbContext<DBMyAppContext>(o => o.UseSqlServer(builder.Configuration.GetConnectionString("DataBase")));

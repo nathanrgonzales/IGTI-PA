@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "1Gs6P4JCqfNr9GuhVN7MN6rYnigCGSGeCyKvjv4diQPYxJ7jcUP8CJllywmcDJ1OXucf4pLSmOHBaeaXKZUkkw==",
+  "dgSpecHash": "QAIdnJXBMfs4xgf6zVTRiotVUuVDUbLfJ2vpWA2tXtXOPJ34I/aOR/PSw5wsxkjrNrrSfaPg8Em21WG7slCgyg==",
   "success": true,
-  "projectFilePath": "D:\\Pos Graduação\\Cloud Computering XP\\Projeto Aplicado\\Entregas\\IGTI-PA\\MyAppIGTI\\MyAppIGTI.csproj",
+  "projectFilePath": "D:\\Pos Graduação\\Cloud Computering XP\\Projeto Aplicado\\Entregas\\repo-IGTI-PA\\IGTI-PA\\MyAppIGTI\\MyAppIGTI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Nathan Gonzales\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\Nathan Gonzales\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",

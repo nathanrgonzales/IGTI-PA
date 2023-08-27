@@ -11284,11 +11284,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Pos Graduação\\Cloud Computering XP\\Projeto Aplicado\\Entregas\\IGTI-PA\\MyAppIGTI\\MyAppIGTI.csproj",
+      "projectUniqueName": "D:\\Pos Graduação\\Cloud Computering XP\\Projeto Aplicado\\Entregas\\repo-IGTI-PA\\IGTI-PA\\MyAppIGTI\\MyAppIGTI.csproj",
       "projectName": "MyAppIGTI",
-      "projectPath": "D:\\Pos Graduação\\Cloud Computering XP\\Projeto Aplicado\\Entregas\\IGTI-PA\\MyAppIGTI\\MyAppIGTI.csproj",
+      "projectPath": "D:\\Pos Graduação\\Cloud Computering XP\\Projeto Aplicado\\Entregas\\repo-IGTI-PA\\IGTI-PA\\MyAppIGTI\\MyAppIGTI.csproj",
       "packagesPath": "C:\\Users\\Nathan Gonzales\\.nuget\\packages\\",
-      "outputPath": "D:\\Pos Graduação\\Cloud Computering XP\\Projeto Aplicado\\Entregas\\IGTI-PA\\MyAppIGTI\\obj\\",
+      "outputPath": "D:\\Pos Graduação\\Cloud Computering XP\\Projeto Aplicado\\Entregas\\repo-IGTI-PA\\IGTI-PA\\MyAppIGTI\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Nathan Gonzales\\AppData\\Roaming\\NuGet\\NuGet.Config",
