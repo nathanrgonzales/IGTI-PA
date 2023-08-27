@@ -1,0 +1,46 @@
+﻿@model List<ResultTestModel>
+@{
+    ViewData["Title"] = "Running Profile Test";
+}
+
+<h1>Profile Tests</h1>
+<br />
+<br />
+<table class="table table-hover">
+    <thead>
+        <tr>            
+            <th scope="col">Description</th>
+            <th scope="col">Status</th>
+            <th scope="col">Actions</th>
+            <th scope="col">Result</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (ResultTestModel item in Model)
+            {
+                <tr>
+                    <td>@item.Description</td>
+                    <td>@item.Status</td>
+                    <td>
+                        @if (item.IdStatus == 0)
+                        {
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <a role="button" class="btn btn-primary" asp-route-id="@item.IdProfileTestModel" asp-controller="ResultTest" asp-action="StartResultTest">Execute Test</a>
+                            </div>
+                        }
+                        else
+                        {
+                            <button class="btn btn-secondary" type="button" disabled>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Running...
+                            </button>
+                        }
+                    </td>
+                    <td>@item.Result</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

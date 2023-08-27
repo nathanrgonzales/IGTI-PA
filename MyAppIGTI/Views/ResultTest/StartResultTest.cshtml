@@ -1,0 +1,12 @@
+﻿@model ResultTestModel
+@{
+    ViewData["Title"] = "Execute Profile Test";
+}
+<div class="text-center">
+    <h3>Do you want to execute (@Model.Description)?</h3>
+</div>
+
+<div class="d-grid gap-2">
+    <a class="btn btn-primary btn-block" rule="button" asp-controller="ResultTest" asp-action="StartResultTestOk" asp-route-id="@Model.IdProfileTestModel">Confirm</a>
+    <a class="btn btn-secondary btn-block" rule="button" asp-controller="ResultTest" asp-action="Index">Cancel</a>
+</div>
