@@ -100,12 +100,33 @@ namespace MyAppIGTI.DBRepo
             return oResultTest;
         }
 
+        public ResultTestModel GetResultTestbyID(int id)
+        {
+            ResultTestModel oResultTestModelDB = _dbMyAppContext.TabResultTest.FirstOrDefault(x => x.Id == id);
+
+            if (oResultTestModelDB == null) throw new System.Exception("GetResultTestbyProfile error");
+
+            return oResultTestModelDB;
+        }
+
         public ResultTestModel InsertResultTest(ResultTestModel resultTest)
         {
             if (resultTest.Id < 0)
                 resultTest.Id = 0;
 
             _dbMyAppContext.TabResultTest.Add(resultTest);
+            _dbMyAppContext.SaveChanges();
+            return resultTest;
+        }
+        public ResultTestModel UpdateResultTest(ResultTestModel resultTest)
+        {
+            ResultTestModel oResultTestModelDB = GetResultTestbyID(resultTest.Id);
+
+            if (oResultTestModelDB == null) throw new System.Exception("Update error");
+
+            oResultTestModelDB.Status = resultTest.Status;
+
+            _dbMyAppContext.TabResultTest.Update(oResultTestModelDB);
             _dbMyAppContext.SaveChanges();
             return resultTest;
         }

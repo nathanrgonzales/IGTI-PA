@@ -12,5 +12,6 @@ namespace MyAppIGTI.DBRepo
         List<ResultTestModel> GetAllResultTest();
         ResultTestModel GetResultTestbyProfile(int id);
         ResultTestModel InsertResultTest(ResultTestModel resultTest);
+        ResultTestModel UpdateResultTest(ResultTestModel resultTest);
     }
 }

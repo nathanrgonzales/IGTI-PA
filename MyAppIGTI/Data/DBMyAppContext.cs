@@ -15,5 +15,11 @@ namespace MyAppIGTI.Data
 
         public DbSet<ResultTestModel> TabResultTest { get; set; }
 
+        /*
+         * 0 - Not Running
+         * 1 - Success
+         * 2 - Fail
+        */
+
     }
 }
