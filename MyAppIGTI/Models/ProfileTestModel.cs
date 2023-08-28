@@ -6,6 +6,7 @@
         public string Description { get; set; }
         public string RepoType { get; set; }
         public string RepoLink { get; set; }
+        public string ProjectName { get; set; }
         public string ListEmail { get; set; }
 
     }

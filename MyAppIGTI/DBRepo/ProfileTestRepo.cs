@@ -38,6 +38,7 @@ namespace MyAppIGTI.DBRepo
             oProfileTestModelDB.Description = profileTest.Description;
             oProfileTestModelDB.RepoType = profileTest.RepoType;
             oProfileTestModelDB.RepoLink = profileTest.RepoLink;
+            oProfileTestModelDB.ProjectName = profileTest.ProjectName;
             oProfileTestModelDB.ListEmail = profileTest.ListEmail;
 
             _dbMyAppContext.TabProfileTest.Update(oProfileTestModelDB);

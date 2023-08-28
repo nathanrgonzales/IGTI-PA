@@ -42,13 +42,13 @@
                         @if (item.IdStatus == 1)
                         {
                             <div class="btn-group" role="group" aria-label="Basic example">
-                                <a role="button" class="btn btn-success" asp-route-id="@item.IdProfileTestModel" asp-controller="ResultTest" asp-action="StartResultTest">Show Result</a>
+                                <a role="button" class="btn btn-success" asp-route-id="@item.IdProfileTestModel" asp-controller="ResultTest" asp-action="ShowSuccessResult">Show Result</a>                                
                             </div>
                         }
                         @if (item.IdStatus == 2)
                         {
                             <div class="btn-group" role="group" aria-label="Basic example">
-                                <a role="button" class="btn btn-danger" asp-route-id="@item.IdProfileTestModel" asp-controller="ResultTest" asp-action="StartResultTest">Show Error</a>
+                                <a role="button" class="btn btn-danger" asp-route-id="@item.IdProfileTestModel" asp-controller="ResultTest" asp-action="ShowErrorResult">Show Error</a>
                             </div>
                         }
                     </td>

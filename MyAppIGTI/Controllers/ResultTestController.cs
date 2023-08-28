@@ -28,7 +28,30 @@ namespace MyAppIGTI.Controllers
             List<ResultTestModel> listResultTest = _IProfileTestRepo.GetAllResultTest();
             return View(listResultTest);            
         }
-        
+        public IActionResult ShowSuccessResult(int id)
+        {
+            ResultTestModel resultTest = _IProfileTestRepo.GetResultTestbyProfile(id);
+
+            string omainPath = _options.Value.MainPath;
+            string otestFolder = resultTest.IdProfileTestModel.ToString("0000000000");
+            string otestFile = "Result" + resultTest.IdProfileTestModel.ToString("0000000000") + ".txt";
+            byte[] fileBytes = System.IO.File.ReadAllBytes(omainPath + "\\" + otestFolder + "\\" + otestFile);
+
+            return File(fileBytes, "application/force-download", omainPath + "\\" + otestFolder + "\\" + otestFile);
+        }
+
+        public IActionResult ShowErrorResult(int id)
+        {
+            ResultTestModel resultTest = _IProfileTestRepo.GetResultTestbyProfile(id);
+
+            string omainPath = _options.Value.MainPath;
+            string otestFolder = resultTest.IdProfileTestModel.ToString("0000000000");
+            string otestFile = "Error" + resultTest.IdProfileTestModel.ToString("0000000000") + ".txt";
+            byte[] fileBytes = System.IO.File.ReadAllBytes(omainPath + "\\" + otestFolder + "\\" + otestFile);
+
+            return File(fileBytes, "application/force-download", omainPath + "\\" + otestFolder + "\\" + otestFile);
+        }
+
         public IActionResult StartResultTest(int id)
         {
             ResultTestModel resultTest = _IProfileTestRepo.GetResultTestbyProfile(id);
@@ -102,7 +125,7 @@ namespace MyAppIGTI.Controllers
 
             ps.AddScript("dotnet sonarscanner begin /o:\"igti-pa\" /k:\"igti-pa_igti-pa\" /d:sonar.host.url=\"https://sonarcloud.io\" /d:sonar.token=\"59bd70d6e28d37965f899481451f1e5df0ac27d5\" ").Invoke();
 
-            var results = ps.AddScript("dotnet build C:\\SonarTest\\0000000001\\IGTI-PA\\MyAppIGTI.sln | Out-File \"Result"+ otestFolder + ".txt\"").Invoke();
+            ps.AddScript("dotnet build " + omainPath + "\\" + otestFolder + profileTest.ProjectName + " | Out-File \"Result"+ otestFolder + ".txt\"").Invoke();
             
             ps.AddScript("dotnet sonarscanner end /d:sonar.token=\"59bd70d6e28d37965f899481451f1e5df0ac27d5\"").Invoke();
 
