@@ -1,7 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using MyAppIGTI.Data;
+﻿using MyAppIGTI.Data;
 using MyAppIGTI.Models;
-using System.Collections.Generic;
 
 namespace MyAppIGTI.DBRepo
 {

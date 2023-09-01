@@ -1,14 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
-using Microsoft.Management;
+using MyAppIGTI.AppVariable;
 using MyAppIGTI.DBRepo;
 using MyAppIGTI.Models;
-using MyAppIGTI.AppVariable; 
-using System;
+using MyAppIGTI.Services;
+using System.Drawing;
 using System.Management.Automation;
-using Humanizer;
-using System.IO;
 
 namespace MyAppIGTI.Controllers
 {
@@ -60,6 +57,7 @@ namespace MyAppIGTI.Controllers
 
         public IActionResult StartResultTestOk(int id)
         {
+            ProfileTestModel profileTest = _IProfileTestRepo.GetProfileTest(id);
             ResultTestModel resultTest = _IProfileTestRepo.GetResultTestbyProfile(id);
 
 
@@ -83,7 +81,44 @@ namespace MyAppIGTI.Controllers
                 _IProfileTestRepo.UpdateResultTest(resultTest);
             }
 
+            bool enviou = SendResultInEmail(profileTest, resultTest);
+
             return RedirectToAction("Index");
+        }
+
+        internal bool SendResultInEmail(ProfileTestModel oProfileTest, ResultTestModel oResultTest)
+        {            
+            string omainPath = _options.Value.MainPath;
+            string oTestFolder = oResultTest.IdProfileTestModel.ToString("0000000000");
+            string oResultFile = "Result" + oResultTest.IdProfileTestModel.ToString("0000000000") + ".txt";
+
+            string EmailTo  = oProfileTest.ListEmail;
+            string Assunto = "Result of Profile = " + oProfileTest.Description;
+            string Messagem = oResultTest.Status;
+            string AttFile  = omainPath + "\\" + oTestFolder + "\\" + oResultFile;
+
+            try
+            {
+                TesteEnvioEmail(EmailTo, Assunto, Messagem, AttFile).GetAwaiter();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task TesteEnvioEmail(string email, string assunto, string mensagem, string anexo)
+        {
+            try
+            {
+                AuthMessageSender oEngine = new AuthMessageSender();    
+                await oEngine.SendEmailAsync(email, assunto, mensagem, anexo);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         internal bool RunningPipelineAsync(ResultTestModel oResultTest)
@@ -119,6 +154,7 @@ namespace MyAppIGTI.Controllers
             }
 
             using var ps = PowerShell.Create();
+
             ps.AddScript("cd " + omainPath + "\\" + otestFolder).Invoke();
             
             ps.AddScript("git clone " + profileTest.RepoLink).Invoke();

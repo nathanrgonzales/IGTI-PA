@@ -1,9 +1,7 @@
-using MyAppIGTI.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Configuration;
-using MyAppIGTI.DBRepo;
-using static NuGet.Packaging.PackagingConstants;
 using MyAppIGTI.AppVariable;
+using MyAppIGTI.Data;
+using MyAppIGTI.DBRepo;
 
 var builder = WebApplication.CreateBuilder(args);
 
