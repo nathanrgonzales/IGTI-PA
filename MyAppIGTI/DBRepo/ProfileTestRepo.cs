@@ -1,4 +1,6 @@
-﻿using MyAppIGTI.Data;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using MyAppIGTI.Data;
 using MyAppIGTI.Models;
 
 namespace MyAppIGTI.DBRepo

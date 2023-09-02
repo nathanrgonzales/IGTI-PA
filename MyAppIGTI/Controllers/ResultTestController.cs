@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Build.Framework.Profiler;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MyAppIGTI.AppVariable;
+using MyAppIGTI.Data;
 using MyAppIGTI.DBRepo;
 using MyAppIGTI.Models;
 using MyAppIGTI.Services;
@@ -55,36 +58,105 @@ namespace MyAppIGTI.Controllers
             return View(resultTest);
         }
 
-        public IActionResult StartResultTestOk(int id)
+        public async Task<IActionResult> StartResultTestOk(int id)
         {
             ProfileTestModel profileTest = _IProfileTestRepo.GetProfileTest(id);
             ResultTestModel resultTest = _IProfileTestRepo.GetResultTestbyProfile(id);
 
-
-            if (RunningPipelineAsync(resultTest))
-            {
-                resultTest.Status = "Last result in " + DateTime.Now.ToString();
-                resultTest.IdStatus = 1; 
-            }
-            else
-            {
-                resultTest.Status = "Error in - " + DateTime.Now.ToString();
-                resultTest.IdStatus = 2;
-            }
+            resultTest.IdStatus = -1;
 
             if (resultTest.Id < 0)
             {
-                _IProfileTestRepo.InsertResultTest(resultTest);                
+                _IProfileTestRepo.InsertResultTest(resultTest);
             }
             else
             {
                 _IProfileTestRepo.UpdateResultTest(resultTest);
             }
 
-            bool enviou = SendResultInEmail(profileTest, resultTest);
+            _ = CallRunTestExecutionAsync(profileTest, resultTest);
 
-            return RedirectToAction("Index");
+            return await Task.Run(() => RedirectToAction("Index"));
         }
+
+        public async Task CallRunTestExecutionAsync(ProfileTestModel oProfileTest, ResultTestModel oResultTest)
+        {
+            await Task.Run(() => RunTestExecutionAsync(oProfileTest, oResultTest).ConfigureAwait(false));
+        }
+
+        public async Task RunTestExecutionAsync(ProfileTestModel oProfileTest, ResultTestModel oResultTest)
+        {
+            try
+            {
+                string omainPath = _options.Value.MainPath;
+                string otestFolder = oResultTest.IdProfileTestModel.ToString("0000000000");
+
+                if (!Directory.Exists(omainPath + "\\" + otestFolder))
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(omainPath + "\\" + otestFolder);
+                    }
+                    catch
+                    {
+                        throw new Exception("Cannot create the main folder");
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        using var psDel = PowerShell.Create();
+                        psDel.AddScript("cd " + omainPath).Invoke();
+                        psDel.AddScript("Remove-Item " + omainPath + "\\" + otestFolder + "\\* -Recurse -Force").Invoke();                        
+                    }
+                    finally
+                    {
+                        Directory.CreateDirectory(omainPath + "\\" + otestFolder);
+                    }
+                }
+
+                using var ps = PowerShell.Create();
+
+                ps.AddScript("cd " + omainPath + "\\" + otestFolder).Invoke();
+
+                ps.AddScript("git clone " + oProfileTest.RepoLink).Invoke();
+
+                ps.AddScript("dotnet sonarscanner begin /o:\"igti-pa\" /k:\"igti-pa_igti-pa\" /d:sonar.host.url=\"https://sonarcloud.io\" /d:sonar.token=\"59bd70d6e28d37965f899481451f1e5df0ac27d5\" ").Invoke();
+
+                ps.AddScript("dotnet build " + omainPath + "\\" + otestFolder + oProfileTest.ProjectName + " | Out-File \"Result" + otestFolder + ".txt\"").Invoke();
+
+                ps.AddScript("dotnet sonarscanner end /d:sonar.token=\"59bd70d6e28d37965f899481451f1e5df0ac27d5\"").Invoke();
+
+                oResultTest.Status = "Last result in " + DateTime.Now.ToString();
+                oResultTest.IdStatus = 1;
+            }
+            catch 
+            {
+                oResultTest.Status = "Error in - " + DateTime.Now.ToString();
+                oResultTest.IdStatus = 2;
+            }
+
+            var optionsBuilder = new DbContextOptionsBuilder<DBMyAppContext>();            
+            optionsBuilder.UseSqlServer(_options.Value.ConString);
+            using (DBMyAppContext dbContext = new DBMyAppContext(optionsBuilder.Options))
+            {
+                List<ResultTestModel> oListResultTestDB = dbContext.TabResultTest.ToList();
+                ResultTestModel oResultTestModelDB = oListResultTestDB.First(x => x.Id == oResultTest.Id);
+
+                if (oResultTestModelDB == null)
+                    throw new System.Exception("Update error");
+
+                oResultTestModelDB.Status = oResultTest.Status;
+                oResultTestModelDB.IdStatus = oResultTest.IdStatus;
+                await dbContext.SaveChangesAsync();
+            }
+
+            await Task.Run(() => RedirectToAction("Index"));            
+
+            /*bool enviou = SendResultInEmail(pProfile, pResult);*/
+        }
+        
 
         internal bool SendResultInEmail(ProfileTestModel oProfileTest, ResultTestModel oResultTest)
         {            
@@ -115,15 +187,14 @@ namespace MyAppIGTI.Controllers
                 AuthMessageSender oEngine = new AuthMessageSender();    
                 await oEngine.SendEmailAsync(email, assunto, mensagem, anexo);
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                throw new Exception("Cannot send email");
             }
         }
 
-        internal bool RunningPipelineAsync(ResultTestModel oResultTest)
+        internal bool RunningPipelineAsync(ProfileTestModel oProfileTest, ResultTestModel oResultTest)
         {
-            ProfileTestModel profileTest = _IProfileTestRepo.GetProfileTest(oResultTest.IdProfileTestModel);
             string omainPath = _options.Value.MainPath;
             string otestFolder = oResultTest.IdProfileTestModel.ToString("0000000000");
 
@@ -157,11 +228,11 @@ namespace MyAppIGTI.Controllers
 
             ps.AddScript("cd " + omainPath + "\\" + otestFolder).Invoke();
             
-            ps.AddScript("git clone " + profileTest.RepoLink).Invoke();
+            ps.AddScript("git clone " + oProfileTest.RepoLink).Invoke();
 
             ps.AddScript("dotnet sonarscanner begin /o:\"igti-pa\" /k:\"igti-pa_igti-pa\" /d:sonar.host.url=\"https://sonarcloud.io\" /d:sonar.token=\"59bd70d6e28d37965f899481451f1e5df0ac27d5\" ").Invoke();
 
-            ps.AddScript("dotnet build " + omainPath + "\\" + otestFolder + profileTest.ProjectName + " | Out-File \"Result"+ otestFolder + ".txt\"").Invoke();
+            ps.AddScript("dotnet build " + omainPath + "\\" + otestFolder + oProfileTest.ProjectName + " | Out-File \"Result"+ otestFolder + ".txt\"").Invoke();
             
             ps.AddScript("dotnet sonarscanner end /d:sonar.token=\"59bd70d6e28d37965f899481451f1e5df0ac27d5\"").Invoke();
 

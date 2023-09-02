@@ -3,6 +3,14 @@
     ViewData["Title"] = "Running Profile Test";
 }
 
+@if (Model != null && Model.Any())
+{
+    if (Model.Count(x => x.IdStatus == -1) > 0)
+    {
+        <meta http-equiv="refresh" content="5">
+    }
+}
+
 <h1>Profile Tests</h1>
 <br />
 <br />
