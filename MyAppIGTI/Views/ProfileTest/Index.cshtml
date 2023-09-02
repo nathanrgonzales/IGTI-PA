@@ -14,7 +14,7 @@
         <tr>
             <th scope="col">ID</th>
             <th scope="col">Description</th>
-            <th scope="col">Repo Type</th>
+            <th scope="col">Build Type</th>
             <th scope="col">Url</th>
             <th scope="col">Actions</th>
         </tr>
@@ -27,7 +27,15 @@
                 <tr>
                     <th scope="row">@item.Id</th>
                     <td>@item.Description</td>
-                    <td>@item.RepoType</td>
+                    
+                    @switch (@item.BuildType)
+                    {
+                        case 1: <td>.Dotnet</td> ; break;
+                        case 2: <td>C, C++ or ObjC</td> ; break;
+                        case 3: <td>Others</td> ; break;
+                        default: <td></td> ; break;
+                    }
+                    
                     <td>@item.RepoLink</td>                    
                     <td>
                         <div class="btn-group" role="group" aria-label="Basic example">

@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Humanizer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Build.Framework.Profiler;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.PowerShell.Commands;
 using MyAppIGTI.AppVariable;
 using MyAppIGTI.Data;
 using MyAppIGTI.DBRepo;
@@ -117,19 +119,56 @@ namespace MyAppIGTI.Controllers
                 }
 
                 using var ps = PowerShell.Create();
-
                 ps.AddScript("cd " + omainPath + "\\" + otestFolder).Invoke();
-
                 ps.AddScript("git clone " + oProfileTest.RepoLink).Invoke();
 
-                ps.AddScript("dotnet sonarscanner begin /o:\"igti-pa\" /k:\"igti-pa_igti-pa\" /d:sonar.host.url=\"https://sonarcloud.io\" /d:sonar.token=\"59bd70d6e28d37965f899481451f1e5df0ac27d5\" ").Invoke();
+                string sHasError = "";
 
-                ps.AddScript("dotnet build " + omainPath + "\\" + otestFolder + oProfileTest.ProjectName + " | Out-File \"Result" + otestFolder + ".txt\"").Invoke();
+                switch (oProfileTest.BuildType)
+                {
+                    case 1:
+                        ps.AddScript("dotnet sonarscanner begin /o:\"igti-pa\" /k:\"igti-pa_igti-pa\" /d:sonar.host.url=\"https://sonarcloud.io\" /d:sonar.token=\"59bd70d6e28d37965f899481451f1e5df0ac27d5\" ").Invoke();
+                        ps.AddScript("dotnet build " + omainPath + "\\" + otestFolder + oProfileTest.ProjectName + " | Out-File \"Result" + otestFolder + ".txt\"").Invoke();
+                        ps.AddScript("dotnet sonarscanner end /d:sonar.token=\"59bd70d6e28d37965f899481451f1e5df0ac27d5\"").Invoke();
+                    break;
 
-                ps.AddScript("dotnet sonarscanner end /d:sonar.token=\"59bd70d6e28d37965f899481451f1e5df0ac27d5\"").Invoke();
+                    case 2:
+                        //build-wrapper-win-x86-64.exe --out-dir bw-output <insert_your_clean_build_command>
+                        /*
+                            sonar-scanner.bat \
+                              -D"sonar.organization=igti-pa" \
+                              -D"sonar.projectKey=igti-pa_igti-pa" \
+                              -D"sonar.sources=." \
+                              -D"sonar.cfamily.build-wrapper-output=bw-output" \
+                              -D"sonar.host.url=https://sonarcloud.io"
+                        */
+                        ps.AddScript("dotnet sonarscanner begin /o:\"igti-pa\" /k:\"igti-pa_igti-pa\" /d:sonar.host.url=\"https://sonarcloud.io\" /d:sonar.token=\"59bd70d6e28d37965f899481451f1e5df0ac27d5\" ").Invoke();
+                        ps.AddScript("dotnet build " + omainPath + "\\" + otestFolder + oProfileTest.ProjectName + " | Out-File \"Result" + otestFolder + ".txt\"").Invoke();
+                        ps.AddScript("dotnet sonarscanner end /d:sonar.token=\"59bd70d6e28d37965f899481451f1e5df0ac27d5\"").Invoke();
+                        break;
 
-                oResultTest.Status = "Last result in " + DateTime.Now.ToString();
-                oResultTest.IdStatus = 1;
+                    case 3:
+                        ps.AddScript("dotnet sonarscanner begin /o:\"igti-pa\" /k:\"igti-pa_igti-pa\" /d:sonar.host.url=\"https://sonarcloud.io\" /d:sonar.token=\"59bd70d6e28d37965f899481451f1e5df0ac27d5\" ").Invoke();
+                        ps.AddScript("dotnet build " + omainPath + "\\" + otestFolder + oProfileTest.ProjectName + " | Out-File \"Result" + otestFolder + ".txt\"").Invoke();
+                        ps.AddScript("dotnet sonarscanner end /d:sonar.token=\"59bd70d6e28d37965f899481451f1e5df0ac27d5\"").Invoke();
+                        break;
+
+                    default:
+                        sHasError = "Not implemented";
+                        break;
+
+                }
+
+                if (!string.IsNullOrEmpty(sHasError))
+                {
+                    oResultTest.Status = sHasError + " - runned in" + DateTime.Now.ToString();
+                    oResultTest.IdStatus = 2;
+                }
+                else
+                {
+                    oResultTest.Status = "Last result in " + DateTime.Now.ToString();
+                    oResultTest.IdStatus = 1;
+                }
             }
             catch 
             {
@@ -192,52 +231,5 @@ namespace MyAppIGTI.Controllers
                 throw new Exception("Cannot send email");
             }
         }
-
-        internal bool RunningPipelineAsync(ProfileTestModel oProfileTest, ResultTestModel oResultTest)
-        {
-            string omainPath = _options.Value.MainPath;
-            string otestFolder = oResultTest.IdProfileTestModel.ToString("0000000000");
-
-            if (!Directory.Exists(omainPath + "\\" + otestFolder))
-            {
-                try
-                {
-                    Directory.CreateDirectory(omainPath + "\\" + otestFolder);
-                }
-                catch
-                {
-                    throw new Exception("Cannot create the main folder");
-                }
-            }
-            else 
-            {
-                try
-                {
-                    using var psDel = PowerShell.Create();
-                    psDel.AddScript("cd " + omainPath).Invoke();
-                    psDel.AddScript("Remove-Item " + omainPath + "\\" + otestFolder + "\\* -Recurse -Force").Invoke();
-                    Thread.Sleep(2000);
-                }
-                finally 
-                {
-                    Directory.CreateDirectory(omainPath + "\\" + otestFolder);
-                }
-            }
-
-            using var ps = PowerShell.Create();
-
-            ps.AddScript("cd " + omainPath + "\\" + otestFolder).Invoke();
-            
-            ps.AddScript("git clone " + oProfileTest.RepoLink).Invoke();
-
-            ps.AddScript("dotnet sonarscanner begin /o:\"igti-pa\" /k:\"igti-pa_igti-pa\" /d:sonar.host.url=\"https://sonarcloud.io\" /d:sonar.token=\"59bd70d6e28d37965f899481451f1e5df0ac27d5\" ").Invoke();
-
-            ps.AddScript("dotnet build " + omainPath + "\\" + otestFolder + oProfileTest.ProjectName + " | Out-File \"Result"+ otestFolder + ".txt\"").Invoke();
-            
-            ps.AddScript("dotnet sonarscanner end /d:sonar.token=\"59bd70d6e28d37965f899481451f1e5df0ac27d5\"").Invoke();
-
-            return true;
-        }
-
     }
 }

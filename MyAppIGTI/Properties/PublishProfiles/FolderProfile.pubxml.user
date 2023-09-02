@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>C:\SonarTest\Deploy</_PublishTargetUrl>
+    <History>True|2023-09-02T16:04:21.2985604Z;True|2023-09-02T12:57:14.4486196-03:00;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+</Project>

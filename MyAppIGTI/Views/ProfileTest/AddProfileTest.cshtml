@@ -16,9 +16,14 @@
         <label for="Repo Type">Repo Type</label>
         <select class="form-control" asp-for="RepoType" id="RepoType">
             <option>Github</option>
-            <option>Bitbucket</option>
-            <option>Mercurial</option>
-            <option>Others</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="Build Type">Build Type</label>
+        <select class="form-control" asp-for="BuildType" id="BuildType">
+            <option value="1">.Dotnet</option>
+            <option value="2">C, C++ or ObjC</option>
+            <option value="3">Other (for JS, TS, Go, Python, PHP, ...)</option>
         </select>
     </div>
     <div class="form-group">
