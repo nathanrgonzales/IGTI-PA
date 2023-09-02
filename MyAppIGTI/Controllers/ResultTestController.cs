@@ -48,7 +48,7 @@ namespace MyAppIGTI.Controllers
 
             string omainPath = _options.Value.MainPath;
             string otestFolder = resultTest.IdProfileTestModel.ToString("0000000000");
-            string otestFile = "Error" + resultTest.IdProfileTestModel.ToString("0000000000") + ".txt";
+            string otestFile = "Result" + resultTest.IdProfileTestModel.ToString("0000000000") + ".txt";
             byte[] fileBytes = System.IO.File.ReadAllBytes(omainPath + "\\" + otestFolder + "\\" + otestFile);
 
             return File(fileBytes, "application/force-download", omainPath + "\\" + otestFolder + "\\" + otestFile);
@@ -132,27 +132,6 @@ namespace MyAppIGTI.Controllers
                         ps.AddScript("dotnet sonarscanner end /d:sonar.token=\"59bd70d6e28d37965f899481451f1e5df0ac27d5\"").Invoke();
                     break;
 
-                    case 2:
-                        //build-wrapper-win-x86-64.exe --out-dir bw-output <insert_your_clean_build_command>
-                        /*
-                            sonar-scanner.bat \
-                              -D"sonar.organization=igti-pa" \
-                              -D"sonar.projectKey=igti-pa_igti-pa" \
-                              -D"sonar.sources=." \
-                              -D"sonar.cfamily.build-wrapper-output=bw-output" \
-                              -D"sonar.host.url=https://sonarcloud.io"
-                        */
-                        ps.AddScript("dotnet sonarscanner begin /o:\"igti-pa\" /k:\"igti-pa_igti-pa\" /d:sonar.host.url=\"https://sonarcloud.io\" /d:sonar.token=\"59bd70d6e28d37965f899481451f1e5df0ac27d5\" ").Invoke();
-                        ps.AddScript("dotnet build " + omainPath + "\\" + otestFolder + oProfileTest.ProjectName + " | Out-File \"Result" + otestFolder + ".txt\"").Invoke();
-                        ps.AddScript("dotnet sonarscanner end /d:sonar.token=\"59bd70d6e28d37965f899481451f1e5df0ac27d5\"").Invoke();
-                        break;
-
-                    case 3:
-                        ps.AddScript("dotnet sonarscanner begin /o:\"igti-pa\" /k:\"igti-pa_igti-pa\" /d:sonar.host.url=\"https://sonarcloud.io\" /d:sonar.token=\"59bd70d6e28d37965f899481451f1e5df0ac27d5\" ").Invoke();
-                        ps.AddScript("dotnet build " + omainPath + "\\" + otestFolder + oProfileTest.ProjectName + " | Out-File \"Result" + otestFolder + ".txt\"").Invoke();
-                        ps.AddScript("dotnet sonarscanner end /d:sonar.token=\"59bd70d6e28d37965f899481451f1e5df0ac27d5\"").Invoke();
-                        break;
-
                     default:
                         sHasError = "Not implemented";
                         break;
@@ -192,8 +171,7 @@ namespace MyAppIGTI.Controllers
             }
 
             await Task.Run(() => RedirectToAction("Index"));            
-
-            /*bool enviou = SendResultInEmail(pProfile, pResult);*/
+                        
         }
         
 

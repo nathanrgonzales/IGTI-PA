@@ -5,7 +5,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 <Project>
   <PropertyGroup>
     <_PublishTargetUrl>C:\SonarTest\Deploy</_PublishTargetUrl>
-    <History>True|2023-09-02T16:04:21.2985604Z;True|2023-09-02T12:57:14.4486196-03:00;</History>
+    <History>True|2023-09-02T22:59:13.6337921Z;True|2023-09-02T19:41:33.3049932-03:00;True|2023-09-02T19:40:14.2868917-03:00;True|2023-09-02T13:04:21.2985604-03:00;True|2023-09-02T12:57:14.4486196-03:00;</History>
     <LastFailureDetails />
   </PropertyGroup>
 </Project>
