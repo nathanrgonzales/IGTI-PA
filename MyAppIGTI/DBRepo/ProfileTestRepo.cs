@@ -38,6 +38,7 @@ namespace MyAppIGTI.DBRepo
             oProfileTestModelDB.Description = profileTest.Description;
             oProfileTestModelDB.RepoType = profileTest.RepoType;
             oProfileTestModelDB.RepoLink = profileTest.RepoLink;
+            oProfileTestModelDB.BuildType = profileTest.BuildType;
             oProfileTestModelDB.ProjectName = profileTest.ProjectName;
             oProfileTestModelDB.ListEmail = profileTest.ListEmail;
 
@@ -119,6 +120,7 @@ namespace MyAppIGTI.DBRepo
             _dbMyAppContext.SaveChanges();
             return resultTest;
         }
+
         public ResultTestModel UpdateResultTest(ResultTestModel resultTest)
         {
             ResultTestModel oResultTestModelDB = GetResultTestbyID(resultTest.Id);

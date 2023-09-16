@@ -4,8 +4,8 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 -->
 <Project>
   <PropertyGroup>
-    <_PublishTargetUrl>C:\SonarTest\Deploy</_PublishTargetUrl>
-    <History>True|2023-09-02T22:59:13.6337921Z;True|2023-09-02T19:41:33.3049932-03:00;True|2023-09-02T19:40:14.2868917-03:00;True|2023-09-02T13:04:21.2985604-03:00;True|2023-09-02T12:57:14.4486196-03:00;</History>
+    <_PublishTargetUrl>D:\Pos Graduação\Cloud Computering XP\Projeto Aplicado\Entregas\repo-IGTI-PA\IGTI-PA\MyAppIGTI\bin\Debug\net7.0\publish\</_PublishTargetUrl>
+    <History>True|2023-09-02T23:33:11.6673940Z;</History>
     <LastFailureDetails />
   </PropertyGroup>
 </Project>

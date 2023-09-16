@@ -170,6 +170,11 @@ namespace MyAppIGTI.Controllers
                 await dbContext.SaveChangesAsync();
             }
 
+            if (oResultTest.IdStatus == 1)
+            {
+                SendResultInEmail(oProfileTest, oResultTest);
+            }
+
             await Task.Run(() => RedirectToAction("Index"));            
                         
         }
@@ -182,13 +187,13 @@ namespace MyAppIGTI.Controllers
             string oResultFile = "Result" + oResultTest.IdProfileTestModel.ToString("0000000000") + ".txt";
 
             string EmailTo  = oProfileTest.ListEmail;
-            string Assunto = "Result of Profile = " + oProfileTest.Description;
+            string Subject = "Result of Profile = " + oProfileTest.Description;
             string Messagem = oResultTest.Status;
-            string AttFile  = omainPath + "\\" + oTestFolder + "\\" + oResultFile;
+            string AttFile  = omainPath + oTestFolder + "\\" + oResultFile;
 
             try
             {
-                TesteEnvioEmail(EmailTo, Assunto, Messagem, AttFile).GetAwaiter();
+                TrySendEmail(EmailTo, Subject, Messagem, AttFile).GetAwaiter();
                 return true;
             }
             catch (Exception)
@@ -197,12 +202,12 @@ namespace MyAppIGTI.Controllers
             }
         }
 
-        public async Task TesteEnvioEmail(string email, string assunto, string mensagem, string anexo)
+        public async Task TrySendEmail(string email, string subject, string message, string attfile)
         {
             try
             {
                 AuthMessageSender oEngine = new AuthMessageSender();    
-                await oEngine.SendEmailAsync(email, assunto, mensagem, anexo);
+                await oEngine.SendEmailAsync(email, subject, message, attfile);
             }
             catch
             {
